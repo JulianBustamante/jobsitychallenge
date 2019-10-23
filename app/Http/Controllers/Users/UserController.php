@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\User;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -26,6 +27,18 @@ class UserController extends Controller
         $users->load('roles');
 
         return $users;
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function showPosts(Request $request, User $user): View
+    {
+        return view('users.show', [
+            'user' => $user,
+            'posts_count' => $user->posts()->count(),
+            'posts' => $user->posts()->latest()->limit(5)->get(),
+        ]);
     }
 
     public function show($user)

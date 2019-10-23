@@ -71,7 +71,7 @@
                         Level
                         <small class="text-muted float-right">{{role.permissions.length}} of {{permissionsCount}}</small>
                         <div class="progress" style="height: 4px;">
-                            <div class="progress-bar bg-info" role="progressbar" :style="`width: ${role.permissions.length*100/permissionsCount}%`" :aria-valuenow="role.permissions.length*100/permissionsCount" aria-valuemin="0" :aria-valuemax="this.permissionsCount"></div>
+                            <div class="progress-bar bg-info" role="progressbar" :style="`width: ${role.permissions.length*100/permissionsCount}%`" :aria-valuenow="role.permissions.length*100/permissionsCount" aria-valuemin="0" :aria-valuemax="permissionsCount"></div>
                         </div>
                     </td>
                     <td class="d-none d-sm-table-cell">
@@ -159,7 +159,7 @@
 
                 localStorage.setItem("filtersTableRoles", JSON.stringify(this.filters));
 
-                axios.post('/api/roles/filter?page=' + this.filters.pagination.current_page, this.filters)
+                axios.post(`/api/roles/filter?page=${this.filters.pagination.current_page}`, this.filters)
                     .then(response => {
                         this.roles = response.data.data;
                         delete response.data.data;
@@ -173,7 +173,7 @@
             getPermissionsCount() {
                 axios.get('/api/permissions/count')
                     .then(response => {
-                        this.permissionsCount = response.data
+                        this.permissionsCount = response.data;
                     })
             },
             // Filters
@@ -187,7 +187,7 @@
                 this.getRoles()
             },
             sort (column) {
-                if(column == this.filters.orderBy.column) {
+                if (column == this.filters.orderBy.column) {
                     this.filters.orderBy.direction = this.filters.orderBy.direction == 'asc' ? 'desc' : 'asc';
                 } else {
                     this.filters.orderBy.column = column;

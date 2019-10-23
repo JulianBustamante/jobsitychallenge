@@ -11,17 +11,19 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['namespace' => 'Posts'], function () {
+    Route::get('/home', 'PostController@index')->name('home');
+    Route::resource('posts', 'PostController')->only('show');
+    Route::get('/posts/feed', 'PostFeedController@index')->name('posts.feed');
 });
 
 Auth::routes();
 
-Route::get('/home', function () {
-    return redirect('dashboard');
+Route::get('/', function () {
+    return redirect('home');
 });
-Route::get('/dashboard', 'DashboardController@index')->name('home');
 
+Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::group(['namespace' => 'Users'], function () {
@@ -33,6 +35,7 @@ Route::middleware('auth')->group(function () {
                 ->middleware('permission:create-users');
             Route::view('/{user}/edit', 'users.edit')
                 ->middleware('permission:update-users');
+            Route::get('/{user}/posts', 'UserController@showPosts')->name('users.show');
         });
 
         // api
@@ -73,13 +76,6 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{role}', 'RoleController@update')->middleware('permission:update-roles');
             Route::delete('/{user}', 'RoleController@destroy')->middleware('permission:delete-roles');
         });
-    });
-});
-
-
-Route::middleware('auth')->group(function () {
-    Route::group(['namespace' => 'Roles'], function () {
-
         // api
         Route::group(['prefix' => 'api/permissions'], function () {
             Route::get('/count', 'PermissionController@count');
@@ -87,3 +83,17 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::middleware('auth')->group(function () {
+    Route::group(['namespace' => 'Profile'], function() {
+        Route::view('/profile', 'profile.profile')->middleware('permission:read-profile');
+        Route::view('/password', 'profile.password')->middleware('permission:read-profile-password');
+        // api
+        Route::group(['prefix' => 'api/profile'], function() {
+            Route::get('/getAuthUser', 'ProfileController@getAuthUser')->middleware('permission:read-profile');
+            Route::put('/updateAuthUser', 'ProfileController@updateAuthUser')->middleware('permission:update-profile');
+            Route::put('/updatePasswordAuthUser', 'ProfileController@updatePasswordAuthUser')->middleware('permission:update-profile-password');
+            Route::post('/uploadAvatarAuthUser', 'ProfileController@uploadAvatarAuthUser')->middleware('permission:update-profile');
+            Route::post('/removeAvatarAuthUser', 'ProfileController@removeAvatarAuthUser')->middleware('permission:update-profile');
+        });
+    });
+});

@@ -149,16 +149,16 @@
         },
         methods: {
             getUsers () {
-                this.loading = true
-                this.users = []
+                this.loading = true;
+                this.users = [];
 
                 localStorage.setItem("filtersTableUsers", JSON.stringify(this.filters));
 
                 axios.post(`/api/users/filter?page=${this.filters.pagination.current_page}`, this.filters)
                     .then(response => {
-                        this.users = response.data.data
-                        delete response.data.data
-                        this.filters.pagination = response.data
+                        this.users = response.data.data;
+                        delete response.data.data;
+                        this.filters.pagination = response.data;
                         this.loading = false
                     })
             },
@@ -167,26 +167,26 @@
             },
             // filters
             filter() {
-                this.filters.pagination.current_page = 1
+                this.filters.pagination.current_page = 1;
                 this.getUsers()
             },
             changeSize (perPage) {
-                this.filters.pagination.current_page = 1
-                this.filters.pagination.per_page = perPage
+                this.filters.pagination.current_page = 1;
+                this.filters.pagination.per_page = perPage;
                 this.getUsers()
             },
             sort (column) {
-                if(column == this.filters.orderBy.column) {
+                if (column == this.filters.orderBy.column) {
                     this.filters.orderBy.direction = this.filters.orderBy.direction == 'asc' ? 'desc' : 'asc'
                 } else {
-                    this.filters.orderBy.column = column
+                    this.filters.orderBy.column = column;
                     this.filters.orderBy.direction = 'asc'
                 }
 
                 this.getUsers()
             },
             changePage (page) {
-                this.filters.pagination.current_page = page
+                this.filters.pagination.current_page = page;
                 this.getUsers()
             }
         }

@@ -2,17 +2,14 @@
 
 namespace App\Models;
 
-use App\Concern\Likeable;
 use App\Scopes\PostedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use Likeable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +22,6 @@ class Post extends Model
         'content',
         'posted_at',
         'slug',
-        'thumbnail_id',
     ];
 
     /**
@@ -104,22 +100,6 @@ class Post extends Model
     }
 
     /**
-     * Return the post's thumbnail
-     */
-    public function thumbnail(): BelongsTo
-    {
-        return $this->belongsTo(Media::class);
-    }
-
-    /**
-     * Return the post's comments
-     */
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
-    }
-
-    /**
      * return the excerpt of the post content
      */
     public function excerpt(int $length = 50): string
@@ -127,11 +107,4 @@ class Post extends Model
         return Str::limit($this->content, $length);
     }
 
-    /**
-     * return true if the post has a thumbnail
-     */
-    public function hasThumbnail(): bool
-    {
-        return filled($this->thumbnail_id);
-    }
 }
